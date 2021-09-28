@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="Description" content="Put your description here.">
+  <base href="/">
+  <title>Veebrate</title>
+  <link rel="stylesheet" href="css/main.css">
+  <script src="main.js"></script>
+</head>
+<body>
+  <div id="app"></div>
+  <script>
+
+    navigator.vibrate =
+      navigator.vibrate ||
+      navigator.webkitVibrate ||
+      navigator.mozVibrate ||
+      navigator.msVibrate;
+
+    var app = Elm.Main.init({
+      node: document.getElementById('app'),
+      flags: 'function' === typeof navigator.vibrate
+    });
+    var ws;
+    app.ports.connect.subscribe(function(data) {
+      var wsUri = (window.location.protocol=='https:'&&'wss://'||'ws://')+window.location.host + '/websocket/';
+      ws = new WebSocket(wsUri)
+      ws.onopen = function() {
+        ws.onmessage = function(event) {
+          var payload = JSON.parse(event.data)
+          switch(payload.type) {
+            case 'user_connected':
+              var message = payload.message
+              message['isConnected'] = true
+              app.ports.connected.send(message);
+              break;
+            case 'user_messageOut':
+              app.ports.messageOut.send(payload.message);
+              break;
+          }
+          
+        }
+        ws.send(JSON.stringify(data));
+      }
+    });
+    app.ports.messageIn.subscribe(function(data) {
+      ws.send(JSON.stringify(data));
+    });
+    app.ports.closeConnection.subscribe(function(data) {
+      ws.close();
+    });
+    var timerID = null;
+    app.ports.vibrateCommand.subscribe(function(data) {
+      if (data.vibrate) {
+        timerID = setInterval(() => {
+          navigator.vibrate(data.vibrateSpeed);
+        }, data.vibrateSpeed);
+      } else {
+        clearInterval(timerID);
+        timerID = null;
+      }
+    });
+
+  </script>
+</body>
+</html>

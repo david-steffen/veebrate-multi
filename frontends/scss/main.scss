@@ -1,0 +1,31 @@
+$dropdown-menu-min-width: 16rem;
+
+@import "./bulma/sass/utilities/_all";
+@import "./bulma/sass/base/_all";
+@import "./bulma/sass/grid/columns";
+@import "./bulma/sass/components/level";
+$list-item-active-background-color: $grey;
+@import "./bulma/sass/components/list";
+@import "./bulma/sass/components/dropdown";
+@import "./bulma/sass/elements/button";
+@import "./bulma/sass/elements/container";
+@import "./bulma/sass/elements/title";
+@import "./bulma/sass/form/_all";
+@import "./bulma/sass/elements/icon";
+@import "./bulma/sass/layout/hero";
+@import "./bulma/slider";
+@import "./font-awesome/scss/fontawesome";
+@import "./font-awesome/scss/solid";
+
+.speed-text {
+  display: inline-block;
+  width: 75px;
+}
+
+.footer-container {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 10px 0px;
+}
